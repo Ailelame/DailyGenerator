@@ -8,6 +8,7 @@ import com.stormbirdmedia.dailygenerator.di.infrastructureModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.GlobalContext.startKoin
+import timber.log.Timber
 
 class DailyGeneratorApp : Application() {
     override fun onCreate() {
@@ -18,5 +19,9 @@ class DailyGeneratorApp : Application() {
             androidContext(this@DailyGeneratorApp)
             modules(appModule, infrastructureModule, domainModule)
         }
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
+
     }
 }

@@ -108,6 +108,23 @@ dependencies {
     annotationProcessor "androidx.room:room-compiler:$room_version"
     ksp "androidx.room:room-compiler:$room_version"
 
+    // Timber
+    def timber = "5.0.1"
+    implementation "com.jakewharton.timber:timber:$timber"
+
+    // Capturable - Accompanist
+    def capturable = "1.0.3"
+    implementation "dev.shreyaspatil:capturable:$capturable"
+    def systemuicontroller = "0.29.1-alpha"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:$systemuicontroller"
+
+
+    // Lottie
+    def lottieVersion = "4.2.2"
+    implementation "com.airbnb.android:lottie:$lottieVersion"
+    implementation "com.airbnb.android:lottie-compose:$lottieVersion"
+
+
     // Tests
     testImplementation 'junit:junit:4.13.2'
     testImplementation "io.insert-koin:koin-test:$koin_version"

@@ -113,7 +113,7 @@ fun ParticipantsLayout(
         }
 
         Button(onClick = { randomize() }, modifier = Modifier.constrainAs(validateButton) {
-            top.linkTo(list.bottom)
+            top.linkTo(list.bottom, 8.dp)
             bottom.linkTo(parent.bottom)
             start.linkTo(parent.start)
             end.linkTo(parent.end)
