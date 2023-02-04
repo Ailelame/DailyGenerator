@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "663611807728",
+    "project_id": "dailygenerator",
+    "storage_bucket": "dailygenerator.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:663611807728:android:0d74a510bab2841e58ef35",
+        "android_client_info": {
+          "package_name": "com.stormbirdmedia.dailygenerator"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "663611807728-sofg82co8t8fr8fbf84bcm98f73pm94m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBITlvp1YxxJjPmOZwBzyBihCkx24KUU84"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "663611807728-sofg82co8t8fr8fbf84bcm98f73pm94m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
