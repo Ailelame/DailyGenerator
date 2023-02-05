@@ -41,6 +41,14 @@ jobs:
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
 
+
+      - name: Decode Keystore
+        id: decode_keystore
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: 'keystore/keystore.jks'
+          encodedString: ${{ secrets.KEYSTORE }}
+
       - name: Build Signed APK
         uses: victorbnl/build-signed-apk@main
         with:
@@ -50,12 +58,6 @@ jobs:
           key_password: ${{ secrets.key_password }}
 
 
-      - name: Decode Keystore
-        id: decode_keystore
-        uses: timheuer/base64-to-file@v1
-        with:
-          fileName: 'keystore/keystore.jks'
-          encodedString: ${{ secrets.KEYSTORE }}
 
       # Run Tests Build
       #      - name: Run gradle tests
