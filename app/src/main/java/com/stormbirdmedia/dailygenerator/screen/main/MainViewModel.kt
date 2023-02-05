@@ -4,11 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.stormbirdmedia.dailygenerator.domain.models.User
 import com.stormbirdmedia.dailygenerator.domain.usecase.UserUseCase
+import com.stormbirdmedia.dailygenerator.infrastructure.local.provider.JokeProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class MainViewModel(private val userUseCase: UserUseCase) : ViewModel() {
+class MainViewModel(private val userUseCase: UserUseCase, jokeProvider: JokeProvider) : ViewModel() {
 
 
     private val _state = MutableStateFlow(UiState())

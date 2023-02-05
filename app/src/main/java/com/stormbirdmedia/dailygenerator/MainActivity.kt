@@ -17,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.stormbirdmedia.dailygenerator.screen.AddUserScreen
+import com.stormbirdmedia.dailygenerator.screen.joke.JokeScreen
 import com.stormbirdmedia.dailygenerator.screen.main.MainScreen
 import com.stormbirdmedia.dailygenerator.screen.randomizer.RandomizerScreen
 import com.stormbirdmedia.dailygenerator.ui.theme.DailyGeneratorTheme
@@ -56,12 +57,7 @@ fun AppNavHost(
     ) {
         composable(route = MainDestination.UserList.route) {
             MainScreen(
-                navToAddUserScreen = {
-                    navController.navigate(MainDestination.AddUser.route)
-                },
-                navToRandomize = {
-                    navController.navigate(MainDestination.Randomizer.route)
-                }
+               navController = navController
             )
         }
         composable(route = MainDestination.AddUser.route) {
@@ -73,8 +69,11 @@ fun AppNavHost(
             RandomizerScreen(
                 navController = navController
             )
-
-
+        }
+        composable(route = MainDestination.Joke.route) {
+            JokeScreen(
+                navController = navController
+            )
         }
     }
 }
@@ -84,6 +83,7 @@ sealed class MainDestination(val route: String) {
     object UserList : MainDestination("userList")
     object AddUser : MainDestination("second")
     object Randomizer : MainDestination("randomizer")
+    object Joke : MainDestination("joke")
 }
 
 typealias OnClickHandler = () -> Unit

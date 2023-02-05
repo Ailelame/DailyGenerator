@@ -2,6 +2,7 @@ package com.stormbirdmedia.dailygenerator.di
 
 import com.stormbirdmedia.dailygenerator.infrastructure.local.AppDatabase
 import com.stormbirdmedia.dailygenerator.infrastructure.local.buildAppDatabase
+import com.stormbirdmedia.dailygenerator.infrastructure.local.provider.JokeProvider
 import com.stormbirdmedia.dailygenerator.infrastructure.local.provider.UserProvider
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -16,5 +17,6 @@ val infrastructureModule = module {
         get<AppDatabase>().userDao()
     }
     factory { UserProvider(get()) }
+    single { JokeProvider(androidContext()) }
 
 }
