@@ -2,19 +2,35 @@
 
 package com.stormbirdmedia.dailygenerator.screen.randomizer
 
+import android.app.Activity
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,10 +44,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.airbnb.lottie.compose.*
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieClipSpec
+import com.airbnb.lottie.compose.LottieCompositionResult
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.stormbirdmedia.dailygenerator.R
 import com.stormbirdmedia.dailygenerator.domain.models.User
 import com.stormbirdmedia.dailygenerator.screen.main.UserCardLayout
@@ -63,14 +83,17 @@ fun RandomizerScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == 0) {
-                Timber.d("share cancelled")
-                viewModel.deleteScreenShot()
-            } else {
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                Timber.d("Share success")
                 viewModel.startKonfetti()
-
-                Timber.d("share success")
+            } else {
+                if (result.resultCode == Activity.RESULT_CANCELED) {
+                    Timber.d("Share cancelled")
+                    viewModel.deleteScreenShot()
+                } else {
+                    Timber.d("Share failed")
+                }
             }
         }
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
@@ -89,18 +112,18 @@ fun RandomizerScreen(
                 bitmap?.let {
                     val fileUri =
                         BitmapUtils.saveBitmapAndPrepareUri(context, it.asAndroidBitmap())
-                    val shareIntent = Intent()
-                    shareIntent.action = Intent.ACTION_SEND
-                    shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
-                    if (fileUri != null) {
-                        shareIntent.setDataAndType(
-                            fileUri.toUri(),
-                            context.contentResolver.getType(fileUri.toUri())
-                        )
-                        // Set the result
+                    val shareIntent = Intent(Intent.ACTION_SEND)
+                    shareIntent.type = "image/*"
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri)
+
+                    if (shareIntent.resolveActivity(context.packageManager) != null) {
                         launcher.launch(shareIntent)
+                    } else {
+                        Timber.d("No app found to handle the share action")
                     }
+
+
                 }
 
                 if (error != null) {
