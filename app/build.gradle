@@ -9,12 +9,16 @@ plugins {
 android {
     compileSdk 33
 
+    def versionMajor = 1
+    def versionMinor = 0
+    def versionPatch = 2
+
     defaultConfig {
         applicationId "com.stormbirdmedia.dailygenerator"
         minSdk 23
         targetSdk 32
-        versionCode 1
-        versionName "1.0"
+        versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
+        versionName "$versionMajor.$versionMinor.$versionPatch"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -22,42 +26,26 @@ android {
         }
     }
 
-//    signingConfigs {
-////        Properties props = new Properties()
-////        props.load(new FileInputStream("keystore.properties"))
-////
-////        release {
-////            storeFile file(props.getProperty("storeFile"))
-////            storePassword props.getProperty("storePassword")
-////            keyAlias props.getProperty("keyAlias")
-////            keyPassword props.getProperty("keyPassword")
-////        }
-//
-//
-////        Properties props = new Properties()
-////        props.load(new FileInputStream("keystore.properties"))
-//
-//        def tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
-//        def allFilesFromDir = new File(tmpFilePath).listFiles()
-//
-//        if (allFilesFromDir != null) {
-//            def keystoreFile = allFilesFromDir.first()
-//            keystoreFile.renameTo("keystore/keystore.jks")
-//        }
-//
-//
-//        release {
-//            storeFile = file("keystore/keystore.jks")
-//            storePassword System.getenv("SIGNING_STORE_PASSWORD")
-//            keyAlias System.getenv("SIGNING_KEY_ALIAS")
-//            keyPassword System.getenv("SIGNING_KEY_PASSWORD")
-//        }
-//    }
+    signingConfigs {
+        def tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
+        def allFilesFromDir = new File(tmpFilePath).listFiles()
+
+        if (allFilesFromDir != null) {
+            def keystoreFile = allFilesFromDir.first()
+            keystoreFile.renameTo("keystore/keystore.jks")
+        }
+
+
+        release {
+            storeFile = file("keystore/keystore.jks")
+            storePassword System.getenv("SIGNING_STORE_PASSWORD")
+            keyAlias System.getenv("SIGNING_KEY_ALIAS")
+            keyPassword System.getenv("SIGNING_KEY_PASSWORD")
+        }
+    }
 
     buildTypes {
         release {
-//            signingConfig signingConfigs.release
-
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }

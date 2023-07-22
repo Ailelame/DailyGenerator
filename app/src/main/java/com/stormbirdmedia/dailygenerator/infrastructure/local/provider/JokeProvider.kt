@@ -50,7 +50,7 @@ class JokeProvider(val appContext : Context) {
     }
 
     fun getRandomJoke() : Joke {
-        return jokes.random()
+        return jokes.filterNot { it.type == "dark" || it.type == "limit" }.random()
     }
 
 

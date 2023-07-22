@@ -43,7 +43,6 @@ fun JokeScreen(
 
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
 
-
     Scaffold(
         topBar = {
             TopAppBar(
