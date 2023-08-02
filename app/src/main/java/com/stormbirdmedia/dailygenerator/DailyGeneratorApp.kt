@@ -2,6 +2,7 @@ package com.stormbirdmedia.dailygenerator
 
 import android.app.Application
 import com.google.android.material.color.DynamicColors
+import com.google.android.material.color.DynamicColorsOptions
 import com.stormbirdmedia.dailygenerator.di.appModule
 import com.stormbirdmedia.dailygenerator.di.domainModule
 import com.stormbirdmedia.dailygenerator.di.infrastructureModule
@@ -13,7 +14,6 @@ import timber.log.Timber
 class DailyGeneratorApp : Application() {
     override fun onCreate() {
         super.onCreate()
-        DynamicColors.applyToActivitiesIfAvailable(this, R.style.Theme_DailyGenerator)
         startKoin {
             androidLogger()
             androidContext(this@DailyGeneratorApp)

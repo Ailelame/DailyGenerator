@@ -37,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
@@ -104,7 +105,7 @@ fun RandomizerScreen(
                 .fillMaxSize()
                 .constrainAs(mainContent) {
                     top.linkTo(parent.top)
-                    bottom.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 },
@@ -139,7 +140,7 @@ fun RandomizerScreen(
                         isSelected
                     )
                 },
-
+                modifier = Modifier.fillMaxSize()
                 )
         }
 
@@ -262,7 +263,10 @@ fun ParticipantsPositionLayout(
             }
         }
     } else {
-        LazyVerticalGrid(columns = GridCells.Fixed(2)) {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2), modifier = Modifier
+                .fillMaxSize()
+        ) {
             items(userPositionList.size,
                 key = { userPositionList[it].user.name }) {
                 UserGridCardLayout(
@@ -291,7 +295,7 @@ fun UserPositionCardLayout(
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(8.dp)
         )
-        UserCardLayout(currentUser = user.user, setSelectedForUser = setSelectedForUser)
+        UserCardLayout(user.position, currentUser = user.user, setSelectedForUser = setSelectedForUser)
     }
 
 }

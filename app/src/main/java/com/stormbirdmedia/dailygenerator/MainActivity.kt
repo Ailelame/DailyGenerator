@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.android.material.color.DynamicColors
 import com.stormbirdmedia.dailygenerator.screen.AddUserScreen
 import com.stormbirdmedia.dailygenerator.screen.joke.JokeScreen
 import com.stormbirdmedia.dailygenerator.screen.main.MainScreen
@@ -25,6 +26,8 @@ import com.stormbirdmedia.dailygenerator.ui.theme.DailyGeneratorTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        DynamicColors.applyToActivitiesIfAvailable(application)
+
         setContent {
             DailyGeneratorTheme {
                 val navController = rememberNavController()

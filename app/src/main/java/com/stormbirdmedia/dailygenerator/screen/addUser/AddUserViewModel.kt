@@ -41,7 +41,7 @@ class AddUserViewModel(private val userUseCase: UserUseCase) : ViewModel() {
     }
 
     fun addUser(name: String) = viewModelScope.launch(Dispatchers.IO) {
-       val result =  userUseCase.insertUser(User(name))
+       val result =  userUseCase.insertUser(User(name.trim()))
         if(result.isSuccess) {
             uiAction.update{
                 UIAction.Success(name)

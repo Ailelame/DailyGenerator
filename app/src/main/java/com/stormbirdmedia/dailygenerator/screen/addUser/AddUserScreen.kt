@@ -3,6 +3,8 @@ package com.stormbirdmedia.dailygenerator.screen
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Delete
@@ -11,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -83,6 +86,7 @@ fun AddUserLayout(
     ConstraintLayout(
         modifier = modifier
             .fillMaxSize()
+            .padding(8.dp)
             .then(modifier)
     ) {
         val (editText, button, list) = createRefs()
@@ -94,10 +98,17 @@ fun AddUserLayout(
             value = text,
             onValueChange = { text = it },
             label = { Text("Ajouter son nom") },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = {
+                if (text.text.isNotBlank()) onAddUser(text.text)
+                text = TextFieldValue("")
+            }),
             modifier = Modifier.constrainAs(editText) {
                 top.linkTo(parent.top)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
+                width = Dimension.fillToConstraints
             }
         )
 
@@ -115,7 +126,7 @@ fun AddUserLayout(
         }
 
         LazyColumn(
-            contentPadding = PaddingValues(8.dp),
+            contentPadding = PaddingValues(0.dp),
             modifier = Modifier.constrainAs(list) {
                 top.linkTo(button.bottom, 16.dp)
                 start.linkTo(parent.start)
