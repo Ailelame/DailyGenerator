@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.DailyGenerator" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowSplashScreenBackground">@color/splash_background</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/logo_anim</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@color/splash_logo_background</item>
+        <item name="android:windowSplashScreenAnimationDuration">5000</item>
+
+    </style>
+</resources>

@@ -4,7 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
@@ -30,9 +32,11 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             DailyGeneratorTheme {
-                val navController = rememberNavController()
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    val navController = rememberNavController()
 
-                AppNavHost(navController = navController)
+                    AppNavHost(navController = navController)
+                }
             }
         }
     }

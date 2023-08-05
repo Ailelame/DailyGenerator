@@ -295,7 +295,7 @@ fun UserPositionCardLayout(
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(8.dp)
         )
-        UserCardLayout(user.position, currentUser = user.user, setSelectedForUser = setSelectedForUser)
+        UserCardLayout(user.position, currentUser = user.user, true, false, setSelectedForUser = setSelectedForUser, {})
     }
 
 }
