@@ -1,11 +1,13 @@
 package com.stormbirdmedia.dailygenerator.screen.main
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.stormbirdmedia.dailygenerator.domain.models.User
 import com.stormbirdmedia.dailygenerator.domain.usecase.UserUseCase
 import com.stormbirdmedia.dailygenerator.data.local.provider.JokeProvider
 import com.stormbirdmedia.dailygenerator.screen.randomizer.UserPosition
+import com.stormbirdmedia.dailygenerator.utils.BitmapUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -91,6 +93,10 @@ class MainViewModel(private val userUseCase: UserUseCase, jokeProvider: JokeProv
 
     fun deleteUser(user: User) = viewModelScope.launch(Dispatchers.IO) {
             userUseCase.deleteUser(user)
+    }
+
+    fun deleteScreenShot(appContext : Context) {
+        BitmapUtils.deleteScreenshot(appContext)
     }
     private suspend fun randomizeUserList() = withContext(Dispatchers.IO) {
         _state.update {

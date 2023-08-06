@@ -2,19 +2,21 @@
 
 package com.stormbirdmedia.dailygenerator.screen.main
 
+import android.app.Activity
+import android.content.Intent
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,6 +24,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,6 +36,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -46,18 +50,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -68,7 +75,11 @@ import androidx.navigation.NavController
 import com.stormbirdmedia.dailygenerator.OnClickHandler
 import com.stormbirdmedia.dailygenerator.R
 import com.stormbirdmedia.dailygenerator.domain.models.User
+import com.stormbirdmedia.dailygenerator.utils.BitmapUtils
+import dev.shreyaspatil.capturable.Capturable
+import dev.shreyaspatil.capturable.controller.rememberCaptureController
 import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 @Composable
 fun MainScreen(
@@ -93,7 +104,7 @@ fun MainScreen(
     }
 
     Column(Modifier.fillMaxSize()) {
-        Header(uiState)
+        Header()
         Content(
             uiState = uiState,
             setSelectedForUser = { userName, isSelected ->
@@ -116,16 +127,10 @@ fun MainScreen(
 
 
 @Composable
-fun Header(uiState: MainViewModel.UiState, modifier: Modifier = Modifier) {
-
-    val dpAnimator = animateDpAsState(
-        if (uiState.step !is MainViewModel.UiStep.RandomizedList) 120.dp else 64.dp,
-        tween(200)
-    )
-
+fun Header(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
-            .height(dpAnimator.value)
+            .height(90.dp)
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -155,64 +160,37 @@ fun Content(
     }
 
     ConstraintLayout(modifier = modifier) {
-        val (content, addParticipantButton, randomizeButton) = createRefs()
+        val (content, secondaryActionButton, mainActionButton) = createRefs()
 
         Surface(
             Modifier
                 .fillMaxWidth()
                 .constrainAs(content) {
                     top.linkTo(parent.top, 8.dp)
-                    bottom.linkTo(addParticipantButton.top, 8.dp)
+                    bottom.linkTo(secondaryActionButton.top, 8.dp)
                     height = Dimension.fillToConstraints
 
                 }) {
-            AnimatedVisibility(
-                visible = !stepIsAddUser.value,
-                enter = slideInHorizontally() + fadeIn(),
-                exit = slideOutHorizontally() + fadeOut()
-            ) {
-                StepLayout(
-                    uiState = uiState,
-                    setSelectedForUser = setSelectedForUser,
-                    deleteUser = {},
-                    modifier = Modifier
-                        .fillMaxSize(),
-                )
+            StepLayout(
+                uiState = uiState,
+                setSelectedForUser = setSelectedForUser,
+                onAddUser = onAddUser,
+                deleteUser = deleteUser,
+                modifier = Modifier
+                    .fillMaxSize(),
+            )
 
-            }
-
-            AnimatedVisibility(
-                visible = stepIsAddUser.value,
-                enter = slideInHorizontally(
-                    initialOffsetX = { it }
-                ) + fadeIn(),
-                exit = slideOutHorizontally(
-                    targetOffsetX = { -it }
-                ) + fadeOut()
-            ) {
-                AddUserLayout(
-                    uiState = uiState,
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    onAddUser = onAddUser,
-                    deleteUser = deleteUser,
-
-                    )
-            }
 
         }
-
-
-
 
         OutlinedButton(onClick = { if (uiState.step is MainViewModel.UiStep.AllParticipants) addUser() else seeAllParticipants() },
             modifier = Modifier
                 .height(56.dp)
-                .constrainAs(addParticipantButton) {
+                .constrainAs(secondaryActionButton) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     width = Dimension.fillToConstraints
-                    bottom.linkTo(randomizeButton.top, 8.dp)
+                    bottom.linkTo(mainActionButton.top, 8.dp)
 
 
                 }) {
@@ -223,7 +201,7 @@ fun Content(
         Button(onClick = { randomize() },
             modifier = Modifier
                 .height(56.dp)
-                .constrainAs(randomizeButton) {
+                .constrainAs(mainActionButton) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     bottom.linkTo(parent.bottom, 8.dp)
@@ -234,108 +212,227 @@ fun Content(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun StepLayout(
     uiState: MainViewModel.UiState,
     setSelectedForUser: (userName: String, isSelected: Boolean) -> Unit,
     deleteUser: (user: User) -> Unit,
     modifier: Modifier = Modifier,
+    onAddUser: (name: String) -> Unit,
 ) {
-    var isAllParticipantsScreen =
-        remember { mutableStateOf(uiState.step is MainViewModel.UiStep.AllParticipants) }
+    var step = remember {
+        mutableStateOf(uiState.step)
+    }
+
     var gridColumnCount = remember {
         mutableIntStateOf(1)
     }
     LaunchedEffect(uiState) {
-        isAllParticipantsScreen.value = uiState.step is MainViewModel.UiStep.AllParticipants
+        gridColumnCount.intValue = if (uiState.userList.size > 10) 2 else 1
+        if (uiState.step is MainViewModel.UiStep.RandomizedList && step.value is MainViewModel.UiStep.RandomizedList) {
+            return@LaunchedEffect
+        }
+        step.value = uiState.step
 
-        gridColumnCount.intValue = if (uiState.userList.size > 8) 2 else 1
     }
 
-    val dpAnimator by animateDpAsState(
-        if (isAllParticipantsScreen.value) 16.dp else 24.dp,
-        tween(200)
-    )
-
     val backgroundColor by animateColorAsState(
-        targetValue = if (isAllParticipantsScreen.value) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surfaceVariant,
+        targetValue = if (step.value !is MainViewModel.UiStep.RandomizedList) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surfaceVariant,
+        tween(500)
+    )
+    val animatedElevation by animateDpAsState(
+        targetValue = if (step.value !is MainViewModel.UiStep.RandomizedList) 0.dp else 8.dp,
         tween(500)
     )
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
 
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Column(
-            modifier = Modifier
-                .clip(RoundedCornerShape(16.dp))
-                .width(screenWidth * 0.8f)
-                .background(backgroundColor),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            AnimatedVisibility(
-                visible = isAllParticipantsScreen.value,
-                enter = fadeIn(),
-                exit = slideOutVertically() + fadeOut()
-            ) {
-                Text(
-                    "Qui participe au daily?",
-                    fontSize = 18.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(top = dpAnimator)
-                )
-            }
-            AnimatedVisibility(
-                visible = !isAllParticipantsScreen.value,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                Text(
-                    "Ordre du daily",
-                    fontSize = 18.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(top = dpAnimator)
-                )
-            }
+    val captureController = rememberCaptureController()
+    val context = LocalContext.current
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(gridColumnCount.intValue),
-                modifier = Modifier
-                    .padding(top = 24.dp, bottom = dpAnimator)
-            ) {
-                itemsIndexed(items = uiState.userList,
-                    key = { index, item -> uiState.userList[index].user.name }) { index, item ->
-                    UserCardLayout(
-                        index,
-                        uiState.userList[index].user,
-                        uiState.step is MainViewModel.UiStep.AllParticipants,
-                        false,
-                        setSelectedForUser,
-                        deleteUser,
-                        Modifier.animateItemPlacement()
-                    )
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                Timber.d("Share success")
+                // todo delete screenshot on success
+            } else {
+                if (result.resultCode == Activity.RESULT_CANCELED) {
+                    Timber.d("Share cancelled")
+                    //  todo    viewModel.deleteScreenShot()
+                } else {
+                    Timber.d("Share failed")
                 }
             }
         }
+    ConstraintLayout(modifier = modifier) {
+        val (content, fab) = createRefs()
+        Capturable(
+            controller = captureController,
+            modifier = Modifier
+                .constrainAs(content) {
+                    centerHorizontallyTo(parent)
+                },
+            onCaptured = { bitmap, error ->
+                bitmap?.let {
+                    val fileUri =
+                        BitmapUtils.saveBitmapAndPrepareUri(context, it.asAndroidBitmap())
+
+                    val shareIntent = Intent(Intent.ACTION_SEND)
+                    shareIntent.type = "image/*"
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri)
+
+                    if (shareIntent.resolveActivity(context.packageManager) != null) {
+                        launcher.launch(shareIntent)
+                    } else {
+                        Timber.d("No app found to handle the share action")
+                    }
+                }
+
+                if (error != null) {
+                    Timber.e(error)
+                }
+            }
+        ) {
+            Surface(
+                shadowElevation = animatedElevation,
+                color = backgroundColor,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(16.dp))
+                    .width(screenWidth * 0.8f)
+
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    AnimatedTitleForStep(step = step.value, onAddUser = onAddUser)
+
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(gridColumnCount.intValue),
+                        modifier = Modifier
+                            .padding(top = 24.dp, bottom = 24.dp)
+                    ) {
+                        itemsIndexed(items = uiState.userList,
+                            key = { index, item -> uiState.userList[index].user.name }) { index, item ->
+                            UserCardLayout(
+                                index,
+                                uiState.userList[index].user,
+                                step.value,
+                                setSelectedForUser,
+                                deleteUser,
+                                Modifier.animateItemPlacement()
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        AnimatedVisibility(
+            visible = uiState.step is MainViewModel.UiStep.RandomizedList,
+            enter = slideInHorizontally(
+                animationSpec = tween(500),
+                initialOffsetX = {
+                    it * 3
+                }
+            ) + fadeIn(),
+            exit = slideOutHorizontally(
+                animationSpec = tween(500),
+                targetOffsetX = {
+                    it
+                }
+            ) + fadeOut(),
+            modifier = Modifier
+                .padding(8.dp)
+                .constrainAs(fab) {
+                    bottom.linkTo(parent.bottom, 24.dp)
+                    end.linkTo(parent.end, 16.dp)
+                },
+            ) {
+            FloatingActionButton(
+                onClick = {  captureController.capture() }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_share),
+                    contentDescription = "share the list generated"
+                )
+            }
+
+        }
+
+
     }
-
-
 }
 
+@Composable
+fun AnimatedTitleForStep(
+    step: MainViewModel.UiStep,
+    onAddUser: (name: String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(""))
+    }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    Row(
+        modifier = Modifier
+            .heightIn(min = 64.dp)
+            .then(modifier),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AnimatedContent(targetState = step,
+            content = { step ->
+                when (step) {
+                    is MainViewModel.UiStep.RandomizedList -> {
+                        Text(
+                            "Ordre du daily",
+                            fontSize = 18.sp,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+
+                    is MainViewModel.UiStep.AddParticipant -> {
+                        OutlinedTextField(
+                            value = text,
+                            onValueChange = { text = it },
+                            label = { Text("Ajouter un participant") },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(onDone = {
+                                if (text.text.isNotBlank()) onAddUser(text.text)
+                                text = TextFieldValue("")
+                                keyboardController?.hide()
+                            }),
+                        )
+                    }
+
+                    else -> {
+                        Text(
+                            "Les participants",
+                            fontSize = 18.sp,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+                }
+            })
+    }
+}
 
 @Composable
 fun UserCardLayout(
     position: Int,
     currentUser: User,
-    showSelectionButton: Boolean,
-    showDeleteButton: Boolean,
+    step: MainViewModel.UiStep,
     setSelectedForUser: (userName: String, isSelected: Boolean) -> Unit,
     deleteUser: (user: User) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val selectionButtonAlphaAnimation by animateFloatAsState(targetValue = if (showSelectionButton) 1f else 0f)
 
     Row(
-        modifier = modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+        modifier = modifier.padding(vertical = 8.dp, horizontal = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = (position + 1).toString(),
@@ -346,94 +443,51 @@ fun UserCardLayout(
         Text(
             text = currentUser.name.lowercase().capitalize(),
             fontSize = 14.sp,
-            modifier = Modifier.padding(start = 8.dp)
+            modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
         )
 
         Spacer(modifier = Modifier.weight(1f))
-        IconButton(
-            onClick = { setSelectedForUser(currentUser.name, !currentUser.isSelected) },
-            modifier = Modifier
-                .alpha(selectionButtonAlphaAnimation)
-                .size(18.dp)
-                .align(Alignment.Bottom)
-        ) {
-            Icon(
-                painter = if (currentUser.isSelected) painterResource(id = R.drawable.ic_visible) else painterResource(
-                    id = R.drawable.ic_invisible
-                ), contentDescription = "visibility for ${currentUser.name}"
-            )
-        }
 
-        if (showDeleteButton) {
-            IconButton(
-                onClick = { deleteUser(currentUser) },
-                modifier = Modifier
-                    .size(18.dp)
-                    .align(Alignment.Bottom)
+        AnimatedContent(targetState = step) { step ->
+            when (step) {
+                is MainViewModel.UiStep.AddParticipant -> {
+                    IconButton(
+                        onClick = { deleteUser(currentUser) },
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .size(18.dp)
+                            .align(Alignment.Bottom)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_delete),
+                            contentDescription = "delete user ${currentUser.name}"
+                        )
+                    }
+                }
 
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_delete),
-                    contentDescription = "delete user ${currentUser.name}"
-                )
+                is MainViewModel.UiStep.AllParticipants -> {
+                    IconButton(
+                        onClick = { setSelectedForUser(currentUser.name, !currentUser.isSelected) },
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .size(18.dp)
+                            .align(Alignment.Bottom)
+                    ) {
+                        Icon(
+                            painter = if (currentUser.isSelected) painterResource(id = R.drawable.ic_visible) else painterResource(
+                                id = R.drawable.ic_invisible
+                            ), contentDescription = "visibility for ${currentUser.name}"
+                        )
+                    }
+                }
+
+                else -> {
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
             }
         }
-
-    }
-}
-
-@Composable
-fun AddUserLayout(
-    modifier: Modifier = Modifier,
-    onAddUser: (name: String) -> Unit,
-    deleteUser: (user: User) -> Unit,
-    uiState: MainViewModel.UiState,
-) {
-    var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue(""))
-    }
-
-    var gridColumnCount = remember {
-        mutableIntStateOf(1)
-    }
-    LaunchedEffect(uiState) {
-        gridColumnCount.intValue = if (uiState.userList.size > 8) 2 else 1
-    }
-
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        OutlinedTextField(
-            value = text,
-            onValueChange = { text = it },
-            label = { Text("Ajouter son nom") },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = {
-                if (text.text.isNotBlank()) onAddUser(text.text)
-                text = TextFieldValue("")
-            }),
-
-            )
-
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(gridColumnCount.intValue),
-            modifier = Modifier
-                .padding(top = 24.dp)
-                .weight(1f)
-        ) {
-            itemsIndexed(items = uiState.userList,
-                key = { index, item -> uiState.userList[index].user.name }) { index, item ->
-                UserCardLayout(
-                    index,
-                    uiState.userList[index].user,
-                    uiState.step is MainViewModel.UiStep.AllParticipants,
-                    true,
-                    { _, _ -> },
-                    deleteUser,
-                    Modifier.animateItemPlacement()
-                )
-            }
-        }
-
     }
 }
 
