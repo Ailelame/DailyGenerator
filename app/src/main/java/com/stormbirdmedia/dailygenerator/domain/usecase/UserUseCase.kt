@@ -3,7 +3,7 @@ package com.stormbirdmedia.dailygenerator.domain.usecase
 import com.stormbirdmedia.dailygenerator.domain.models.User
 import com.stormbirdmedia.dailygenerator.domain.models.toUser
 import com.stormbirdmedia.dailygenerator.domain.models.toUserEntity
-import com.stormbirdmedia.dailygenerator.infrastructure.local.provider.UserProvider
+import com.stormbirdmedia.dailygenerator.data.local.provider.UserProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

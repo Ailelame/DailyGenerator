@@ -1,4 +1,4 @@
-package com.stormbirdmedia.dailygenerator.infrastructure.local.entities
+package com.stormbirdmedia.dailygenerator.data.local.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

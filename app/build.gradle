@@ -97,10 +97,21 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
     implementation "androidx.lifecycle:lifecycle-runtime-compose:2.7.0-alpha01"
 
+    // Splashscreen API
+    implementation "androidx.core:core-splashscreen:1.0.1"
+
+    // Navigation
+    def nav_version = "2.5.3"
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-compose:$nav_version"
+
+    // Widget with Glance
+    implementation "androidx.glance:glance-appwidget:1.0.0-rc01"
+    implementation "androidx.glance:glance-material3:1.0.0-rc01"
+
     // Konfetti
     implementation 'nl.dionsegijn:konfetti-compose:2.0.2'
-
-
 
     // Optional
     implementation 'androidx.compose.material:material-icons-core:1.6.0-alpha02'
@@ -109,14 +120,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_core"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_android"
 
-    // Navigation
-    def nav_version = "2.5.3"
-    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
-    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
-    implementation "androidx.navigation:navigation-compose:$nav_version"
 
-    // Splashscreen API
-    implementation "androidx.core:core-splashscreen:1.0.1"
 
 
     // Koin

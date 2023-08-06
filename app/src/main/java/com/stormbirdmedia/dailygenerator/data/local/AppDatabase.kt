@@ -1,11 +1,11 @@
-package com.stormbirdmedia.dailygenerator.infrastructure.local
+package com.stormbirdmedia.dailygenerator.data.local
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.stormbirdmedia.dailygenerator.infrastructure.local.dao.UserDao
-import com.stormbirdmedia.dailygenerator.infrastructure.local.entities.UserEntity
+import com.stormbirdmedia.dailygenerator.data.local.dao.UserDao
+import com.stormbirdmedia.dailygenerator.data.local.entities.UserEntity
 
 
 fun buildAppDatabase(applicationContext: Context, databaseName: String): AppDatabase {

@@ -4,8 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.stormbirdmedia.dailygenerator.domain.models.User
 import com.stormbirdmedia.dailygenerator.domain.usecase.UserUseCase
-import com.stormbirdmedia.dailygenerator.infrastructure.local.provider.JokeProvider
-import com.stormbirdmedia.dailygenerator.screen.addUser.AddUserViewModel
+import com.stormbirdmedia.dailygenerator.data.local.provider.JokeProvider
 import com.stormbirdmedia.dailygenerator.screen.randomizer.UserPosition
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

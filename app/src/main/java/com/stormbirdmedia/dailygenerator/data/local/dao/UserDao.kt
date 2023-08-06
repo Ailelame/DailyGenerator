@@ -1,9 +1,9 @@
-package com.stormbirdmedia.dailygenerator.infrastructure.local.dao
+package com.stormbirdmedia.dailygenerator.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Query
-import com.stormbirdmedia.dailygenerator.infrastructure.local.base.BaseDao
-import com.stormbirdmedia.dailygenerator.infrastructure.local.entities.UserEntity
+import com.stormbirdmedia.dailygenerator.data.local.base.BaseDao
+import com.stormbirdmedia.dailygenerator.data.local.entities.UserEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

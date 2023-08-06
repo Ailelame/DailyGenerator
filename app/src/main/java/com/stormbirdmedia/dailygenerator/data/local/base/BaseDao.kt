@@ -1,4 +1,4 @@
-package com.stormbirdmedia.dailygenerator.infrastructure.local.base
+package com.stormbirdmedia.dailygenerator.data.local.base
 
 import androidx.room.*
 

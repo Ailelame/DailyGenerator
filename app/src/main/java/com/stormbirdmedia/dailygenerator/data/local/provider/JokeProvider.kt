@@ -1,4 +1,4 @@
-package com.stormbirdmedia.dailygenerator.infrastructure.local.provider
+package com.stormbirdmedia.dailygenerator.data.local.provider
 
 import android.content.Context
 import com.squareup.moshi.JsonAdapter

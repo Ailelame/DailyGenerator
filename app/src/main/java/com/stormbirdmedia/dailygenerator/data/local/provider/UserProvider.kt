@@ -1,7 +1,7 @@
-package com.stormbirdmedia.dailygenerator.infrastructure.local.provider
+package com.stormbirdmedia.dailygenerator.data.local.provider
 
-import com.stormbirdmedia.dailygenerator.infrastructure.local.dao.UserDao
-import com.stormbirdmedia.dailygenerator.infrastructure.local.entities.UserEntity
+import com.stormbirdmedia.dailygenerator.data.local.dao.UserDao
+import com.stormbirdmedia.dailygenerator.data.local.entities.UserEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext

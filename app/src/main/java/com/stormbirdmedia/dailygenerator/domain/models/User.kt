@@ -1,6 +1,6 @@
 package com.stormbirdmedia.dailygenerator.domain.models
 
-import com.stormbirdmedia.dailygenerator.infrastructure.local.entities.UserEntity
+import com.stormbirdmedia.dailygenerator.data.local.entities.UserEntity
 
 data class User (
     val name: String,
