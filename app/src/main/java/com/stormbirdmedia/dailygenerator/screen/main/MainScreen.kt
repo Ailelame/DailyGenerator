@@ -19,6 +19,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,6 +37,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -44,13 +46,13 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -175,6 +177,7 @@ fun Content(
                 uiState = uiState,
                 setSelectedForUser = setSelectedForUser,
                 onAddUser = onAddUser,
+                addUser = addUser,
                 deleteUser = deleteUser,
                 modifier = Modifier
                     .fillMaxSize(),
@@ -218,6 +221,7 @@ fun StepLayout(
     uiState: MainViewModel.UiState,
     setSelectedForUser: (userName: String, isSelected: Boolean) -> Unit,
     deleteUser: (user: User) -> Unit,
+    addUser: OnClickHandler,
     modifier: Modifier = Modifier,
     onAddUser: (name: String) -> Unit,
 ) {
@@ -308,8 +312,20 @@ fun StepLayout(
 
                     AnimatedTitleForStep(step = step.value, onAddUser = onAddUser)
 
+                    if (uiState.userList.isEmpty() && step.value is MainViewModel.UiStep.AllParticipants) {
+                        FilledTonalButton(
+                            onClick = {
+                                addUser()
+                            },
+                            modifier = Modifier.padding(top = 24.dp),
+                        ) {
+                            Text(text = "Ajouter le premier participant")
+                        }
+                    }
+
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(gridColumnCount.intValue),
+                        contentPadding = PaddingValues(horizontal = 8.dp),
                         modifier = Modifier
                             .padding(top = 24.dp, bottom = 24.dp)
                     ) {
@@ -349,9 +365,9 @@ fun StepLayout(
                     bottom.linkTo(parent.bottom, 24.dp)
                     end.linkTo(parent.end, 16.dp)
                 },
-            ) {
+        ) {
             FloatingActionButton(
-                onClick = {  captureController.capture() }) {
+                onClick = { captureController.capture() }) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_share),
                     contentDescription = "share the list generated"
@@ -431,7 +447,7 @@ fun UserCardLayout(
 ) {
 
     Row(
-        modifier = modifier.padding(vertical = 8.dp, horizontal = 8.dp),
+        modifier = modifier.padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -443,14 +459,15 @@ fun UserCardLayout(
         Text(
             text = currentUser.name.lowercase().capitalize(),
             fontSize = 14.sp,
-            modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+            modifier = Modifier
+                .padding(start = 8.dp, end = 8.dp)
+                .weight(1f),
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
 
-        Spacer(modifier = Modifier.weight(1f))
 
-        AnimatedContent(targetState = step) { step ->
+        AnimatedContent(targetState = step, Modifier.width(24.dp)) { step ->
             when (step) {
                 is MainViewModel.UiStep.AddParticipant -> {
                     IconButton(
@@ -478,7 +495,8 @@ fun UserCardLayout(
                         Icon(
                             painter = if (currentUser.isSelected) painterResource(id = R.drawable.ic_visible) else painterResource(
                                 id = R.drawable.ic_invisible
-                            ), contentDescription = "visibility for ${currentUser.name}"
+                            ), contentDescription = "visibility for ${currentUser.name}",
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                 }

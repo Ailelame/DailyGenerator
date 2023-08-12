@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.stormbirdmedia.dailygenerator.domain.models.User
 import com.stormbirdmedia.dailygenerator.domain.usecase.UserUseCase
 import com.stormbirdmedia.dailygenerator.data.local.provider.JokeProvider
-import com.stormbirdmedia.dailygenerator.screen.randomizer.UserPosition
 import com.stormbirdmedia.dailygenerator.utils.BitmapUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -128,4 +127,4 @@ class MainViewModel(private val userUseCase: UserUseCase, jokeProvider: JokeProv
 
 
 }
-
+data class UserPosition(val user: User, val position: Int)

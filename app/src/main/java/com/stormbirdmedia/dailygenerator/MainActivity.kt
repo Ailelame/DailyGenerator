@@ -6,23 +6,21 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.material.color.DynamicColors
-import com.stormbirdmedia.dailygenerator.screen.AddUserScreen
-import com.stormbirdmedia.dailygenerator.screen.joke.JokeScreen
 import com.stormbirdmedia.dailygenerator.screen.main.MainScreen
-import com.stormbirdmedia.dailygenerator.screen.randomizer.RandomizerScreen
 import com.stormbirdmedia.dailygenerator.ui.theme.DailyGeneratorTheme
 
 class MainActivity : ComponentActivity() {
@@ -64,33 +62,16 @@ fun AppNavHost(
     ) {
         composable(route = MainDestination.UserList.route) {
             MainScreen(
-               navController = navController
-            )
-        }
-        composable(route = MainDestination.AddUser.route) {
-            AddUserScreen(
                 navController = navController
             )
         }
-        composable(route = MainDestination.Randomizer.route) {
-            RandomizerScreen(
-                navController = navController
-            )
-        }
-        composable(route = MainDestination.Joke.route) {
-            JokeScreen(
-                navController = navController
-            )
-        }
+
     }
 }
 
 
 sealed class MainDestination(val route: String) {
     object UserList : MainDestination("userList")
-    object AddUser : MainDestination("second")
-    object Randomizer : MainDestination("randomizer")
-    object Joke : MainDestination("joke")
 }
 
 typealias OnClickHandler = () -> Unit

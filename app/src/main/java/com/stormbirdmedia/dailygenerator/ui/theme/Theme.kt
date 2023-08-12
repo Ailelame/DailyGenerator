@@ -84,7 +84,8 @@ fun DailyGeneratorTheme(
     content: @Composable () -> Unit
 ) {
 
-    val dynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+//    val dynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    val dynamicColor = false
     Timber.w("using dynamic colors -> $dynamicColor")
     val colors = when {
         dynamicColor && darkTheme -> dynamicDarkColorScheme(LocalContext.current)
